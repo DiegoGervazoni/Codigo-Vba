@@ -1,0 +1,84 @@
+Option Explicit
+
+
+Public Function ChecarCNPJ(sCNPJ As String) As String
+
+   Dim a1, a2, contador, a4, a5 As Double
+   
+   If Len(sCNPJ) = 8 And Val(sCNPJ) > 0 Then
+      a1 = 0
+      a2 = 0
+      a4 = 0
+      For contador = 1 To 7
+         a1 = Val(Mid(sCNPJ, contador, 1))
+         If (a1 Mod 2) <> 0 Then
+            a1 = a1 * 2
+         End If
+         If a1 > 9 Then
+            a2 = a2 + Int(a1 / 10) + (a1 Mod 10)
+         Else
+            a2 = a2 + a1
+         End If
+      Next contador
+      a4 = IIf((a2 Mod 10) <> 0, 10 - (a2 Mod 10), 0)
+      If a4 = Val(Mid(sCNPJ, 8, 1)) Then
+         ChecarCNPJ = "Válido"
+      Else
+         ChecarCNPJ = "Inválido"
+      End If
+   Else
+      If Len(sCNPJ) = 14 And Val(sCNPJ) > 0 Then
+         a1 = 0
+         contador = 0
+         a4 = 0
+         a5 = 0
+         a2 = 5
+         For contador = 1 To 12
+            a1 = a1 + (Val(Mid(sCNPJ, contador, 1)) * a2)
+            a2 = IIf(a2 > 2, a2 - 1, 9)
+         Next contador
+         a1 = a1 Mod 11
+         a4 = IIf(a1 > 1, 11 - a1, 0)
+         a1 = 0
+         contador = 0
+         a2 = 6
+         For contador = 1 To 13
+            a1 = a1 + (Val(Mid(sCNPJ, contador, 1)) * a2)
+            a2 = IIf(a2 > 2, a2 - 1, 9)
+         Next contador
+         a1 = a1 Mod 11
+         a5 = IIf(a1 > 1, 11 - a1, 0)
+         If (a4 = Val(Mid(sCNPJ, 13, 1)) And a5 = Val(Mid(sCNPJ, 14, 1))) Then
+            ChecarCNPJ = "CNPJ Válido"
+         Else
+            ChecarCNPJ = "CNPJ Inválido"
+         End If
+      Else
+         ChecarCNPJ = "CNPJ Inválido"
+      End If
+   End If
+End Function
+
+ Sub CNPJ()
+ 
+ Dim verificador As String
+ Dim CNPJ As String
+ 
+ CNPJ = InputBox("Digite um cnpj: ")
+ verificador = ChecarCNPJ(CNPJ)
+  
+ MsgBox verificador
+ 
+  While Len(CNPJ) > 14
+  
+   
+        MsgBox ("Por favor digite  apenas números ex: 00000000000000"), vbExclamation
+        CNPJ = InputBox("Digite um cnpj")
+        verificador = ChecarCNPJ(CNPJ)
+  
+ MsgBox verificador
+
+ Wend
+ 
+ End Sub
+

@@ -1,0 +1,63 @@
+Option Explicit
+
+Sub VerificarDatas()
+
+
+Dim dataHoje, dataa, retornar As String
+
+
+dataHoje = CStr(Date)
+
+dataa = InputBox("Digite uma data")
+
+retornar = fncdatacompletada(CDate(dataa))
+
+MsgBox ("A diferença entre a data digitada " & dataa & " e a data atual " & dataHoje & _
+" é de:" & vbCr & vbCr & retornar), vbInformation
+
+
+End Sub
+
+Private Function fncdatacompletada(dataa As Date) As String
+Dim anos As Byte, meses, dias As Byte, datacompletada As Date
+Dim retorno As Boolean
+ 
+If dataa > Date Or dataa = 0 Then
+    fncdatacompletada = "A data que foi fornecida é uma data atual ou uma data futura!"
+    Exit Function
+End If
+
+If dataa = Date Then
+    fncdatacompletada = 0
+    Exit Function
+End If
+ 
+'Para ano bissexto
+dataa = IIf(Format(dataa, "mm/dd") = "02/29", dataa - 1, dataa)
+ 
+'Para a diferença em anos
+anos = Int((Format(Date, "yyyymmdd") - Format(dataa, "yyyymmdd")) / 10000)
+ 
+retorno = (Format(dataa, "mmdd") > Format(Date, "mmdd"))
+
+datacompletada = DateSerial(Year(Date) + retorno, Format(dataa, "mm"), Format(dataa, "dd"))
+
+'Para a diferença em meses
+meses = DateDiff("m", datacompletada, Date) + (Format(dataa, "dd") > Format(Date, "dd"))
+ 
+retorno = (Format(dataa, "dd") > Format(Date, "dd"))
+
+datacompletada = DateSerial(Year(Date), Format(Date, "mm") + retorno, Format(dataa, "dd"))
+
+datacompletada = IIf(Format(dataa, "dd") <> Format(datacompletada, "dd"), datacompletada - Format(datacompletada, "dd"), datacompletada)
+
+'Para diferença em dias
+dias = CDbl(Date) - CDbl(datacompletada)
+
+fncdatacompletada = IIf(anos <= 1, IIf(anos = 0, "", anos & " ano "), anos & " anos ") & _
+                              IIf(meses <= 1, IIf(meses = 0, "", meses & " mes "), meses & " meses ") & _
+                              IIf(dias <= 1, IIf(dias = 0, "", dias & " dia "), dias & " dias ")
+End Function
+
+
+
